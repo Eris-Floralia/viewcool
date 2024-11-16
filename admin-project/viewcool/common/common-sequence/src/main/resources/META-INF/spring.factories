@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+viewcool.common.sequence.config.IdGeneratorAutoConfig

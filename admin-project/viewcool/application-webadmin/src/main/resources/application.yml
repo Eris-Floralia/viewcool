@@ -1,0 +1,117 @@
+logging:
+  level:
+    # 这里设置的日志级别优先于logback-spring.xml文件Loggers中的日志级别。
+    viewcool: info
+  config: classpath:logback-spring.xml
+
+server:
+  port: 8082
+  tomcat:
+    uri-encoding: UTF-8
+    threads:
+      max: 100
+      min-spare: 10
+  servlet:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+
+# spring相关配置
+spring:
+  application:
+    name: application-webadmin
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+  mvc:
+    converters:
+      preferred-json-mapper: fastjson
+  main:
+    allow-circular-references: true
+  groovy:
+    template:
+      check-template-location: false
+
+mybatis-plus:
+  mapper-locations: classpath:viewcool/webadmin/*/dao/mapper/*Mapper.xml,viewcool/common/log/dao/mapper/*Mapper.xml
+  type-aliases-package: viewcool.webadmin.*.model,viewcool.common.log.model
+  global-config:
+    db-config:
+      logic-delete-value: -1
+      logic-not-delete-value: 1
+
+# 自动分页的配置
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: false
+  params: count=countSql
+
+common-core:
+  # 可选值为 mysql / postgresql / oracle / dm8 / kingbase / opengauss / sqlserver
+  databaseType: mysql
+
+common-swagger:
+  # 当enabled为false的时候，则可禁用swagger。
+  enabled: true
+  # 工程的基础包名。
+  basePackage: viewcool
+  # 工程服务的基础包名。
+  serviceBasePackage: viewcool.webadmin
+  title: 橙单单体服务工程
+  description: 橙单单体服务工程详情
+  version: 1.0
+  
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    #operations-sorter: order
+  api-docs:
+    path: /v3/api-docs
+  default-flat-param-object: false
+
+common-datafilter:
+  tenant:
+    # 对于单体服务，该值始终为false。
+    enabled: false
+  dataperm:
+    enabled: true
+    # 在拼接数据权限过滤的SQL时，我们会用到sys_dept_relation表，该表的前缀由此配置项指定。
+    # 如果没有前缀，请使用 "" 。
+    deptRelationTablePrefix: ""
+    # 是否在每次执行数据权限查询过滤时，都要进行菜单Id和URL之间的越权验证。如果使用SaToken权限框架，该参数必须为false。
+    enableMenuPermVerify: false
+
+# 暴露监控端点
+management:
+  health:
+    redis:
+      enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+    jmx:
+      exposure:
+        include: '*'
+  endpoint:
+    # 与中间件相关的健康详情也会被展示
+    health:
+      show-details: always
+    configprops:
+      # 在/actuator/configprops中，所有包含password的配置，将用 * 隐藏。
+      # 如果不想隐藏任何配置项的值，可以直接使用如下被注释的空值。
+      # keys-to-sanitize:
+      keys-to-sanitize: password
+  server:
+    base-path: "/"
+
+common-log:
+  # 操作日志配置，对应配置文件common-log/OperationLogProperties.java
+  operation-log:
+    enabled: true
